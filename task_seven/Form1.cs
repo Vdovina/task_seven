@@ -46,7 +46,8 @@ namespace task_seven
         private void one_Click(object sender, EventArgs e)
         {
             textBox1.Text = textBox1.Text + 1;
-            if (Convert.ToInt32(Math.Log(textBox1.Text.Length, 2)) == Math.Log(textBox1.Text.Length, 2) && textBox1.Text.Length != 1) calculate.Enabled = true;
+            if (Convert.ToInt32(Math.Log(textBox1.Text.Length, 2)) == Math.Log(textBox1.Text.Length, 2)
+                && textBox1.Text.Length != 1 && starcount > 0) calculate.Enabled = true;
             else calculate.Enabled = false;
         }
 
@@ -54,7 +55,8 @@ namespace task_seven
         {
             textBox1.Text = textBox1.Text + "*";
             starcount++;
-            if (Convert.ToInt32(Math.Log(textBox1.Text.Length, 2)) == Math.Log(textBox1.Text.Length, 2) && textBox1.Text.Length != 1) calculate.Enabled = true;
+            if (Convert.ToInt32(Math.Log(textBox1.Text.Length, 2)) == Math.Log(textBox1.Text.Length, 2)
+                && textBox1.Text.Length != 1 && starcount > 0) calculate.Enabled = true;
             else calculate.Enabled = false;
             //if (starcount >= Math.Log(textBox1.Text.Length, 2)) star.Enabled = false;
         }
@@ -68,7 +70,8 @@ namespace task_seven
         private void textBox1_KeyUp(object sender, KeyEventArgs e)
         {
             if (textBox1.Text.Length > 0)
-                if (Convert.ToInt32(Math.Log(textBox1.Text.Length, 2)) == Math.Log(textBox1.Text.Length, 2) && textBox1.Text.Length != 1) calculate.Enabled = true;
+                if (Convert.ToInt32(Math.Log(textBox1.Text.Length, 2)) == Math.Log(textBox1.Text.Length, 2)
+                    && textBox1.Text.Length != 1 && starcount > 0) calculate.Enabled = true;
                 else calculate.Enabled = false;
         }
 
@@ -94,23 +97,19 @@ namespace task_seven
                  }
             }
             string finale = textBox1.Text;
-            for (int i = 0; i < Math.Pow(2, starcount); i++)
+            for (int i = 0; i < Math.Pow(2, starcount); i++) // для каждой строки матрицы возможных подставлений вместо звездочек
             {
-                for (int j = 0; j < starcount; j++)
+                for (int j = 0; j < starcount; j++) // для каждой звездочки - замена
                 {
                     string f = starset[i, j].ToString();
                     finale = finale.Remove(position[j], 1).Insert(position[j], f);
                 }
-                bool result = IsMonotonus(finale, true);
+                bool result = IsMonotonus(finale, true); // проверка получившегося вектора на монотонность
                 if (result) answer.Text += finale + "\n";
             }
-            if (answer.Text == "") answer.Text = "\nДанная функция\n не может быть \nдоопределена до \nмонотонной";
+            if (answer.Text == "") answer.Text = "Данная функция\n не может быть \nдоопределена до \nмонотонной";
 
             calculate.Enabled = false;
-            //int[,] matrix = BoolSet(textBox1.Text.Length);
-            
-            //string l = "01";
-            //bool k = IsMonotonus(l, true);
         }
 
         
@@ -118,25 +117,24 @@ namespace task_seven
         private bool IsMonotonus(string vector, bool ok)
         {
             if (!ok) return false;
-            int halfsize = vector.Length / 2;
+            int halfsize = vector.Length / 2; // поовина длины строки
             // devide a vector into two
             string right = vector.Substring(0, halfsize);
             string left = vector.Substring(halfsize, vector.Length - halfsize);
 
-            if (right.Length > 1 && left.Length > 1)
+            if (right.Length > 1 && left.Length > 1) // если длина полувектора больше 1 
             {
+                // вызываются рекурсии для правого и левого векторов поочерёдно 
                 ok = IsMonotonus(right, ok); if (!ok) return false;
+                // сравниваются элементы с одинаковыми индексами
                 for (int i = 0; i < halfsize; i++)
                 {
                     if (Convert.ToInt16(right[i]) <= Convert.ToInt16(left[i])) ok = true; else return false;
                 }
                 ok = IsMonotonus(left, ok); if (!ok) return false;
             }
-            else
+            else // если длина полувектора = 1, то сравниваются правый и левый между собой
             {
-                int sd = Convert.ToInt16(right);
-                int a = Convert.ToInt16(left);
-
                 if (Convert.ToInt16(right) > Convert.ToInt16(left)) return false;
             }
             return ok;
